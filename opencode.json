@@ -1,0 +1,21 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "mcp": {
+        "context7": {
+            "type": "remote",
+            "url": "https://mcp.context7.com/mcp",
+            "headers": {
+                "CONTEXT7_API_KEY": "ctx7sk-105baf64-b8b4-48c9-a631-3594a264a22b"
+            },
+            "enabled": true
+        },
+        "synthia": {
+            "type": "local",
+            "command": ["node", "/Users/michael.schmitt/sc/hackathon/Synthia/apps/mcp-server/build/index.js"],
+            "enabled": true,
+            "environment": {
+                "USE_API": "true",
+            }
+        }
+    }
+}
