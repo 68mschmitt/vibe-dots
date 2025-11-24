@@ -1,0 +1,213 @@
+---
+description: Analyze a file using 4 parallel Ollama models for security, architecture, code quality, and style analysis
+---
+
+You are tasked with performing comprehensive code analysis using 4 specialized Ollama models running in parallel.
+
+**User Input**: $ARGUMENTS (path to file to analyze)
+
+## Analysis Task
+
+Analyze the file provided in $ARGUMENTS using 4 different Ollama models, each specialized for a specific type of analysis:
+
+1. **Security Analysis** - Agent: `deepseek-coder` (ollama/deepseek-coder)
+2. **Architecture Analysis** - Agent: `qwen2.5-coder-14b` (ollama/qwen2.5-coder:14b)
+3. **Code Quality Analysis** - Agent: `phi4-14b` (ollama/phi4:14b)
+4. **Code Style Quality Analysis** - Agent: `mistral-7b` (ollama/mistral:7b)
+
+## Execution Steps
+
+### Step 1: Validate Input
+- Verify that $ARGUMENTS contains a valid file path
+- Read the file contents to ensure it exists and is readable
+- If the file doesn't exist or is empty, report an error and exit
+
+### Step 2: Read the File
+- Read the complete contents of the file specified in $ARGUMENTS
+- Store the file contents to pass to each sub-agent
+
+### Step 3: Launch 4 Parallel Sub-Agents
+Invoke all 4 specialized sub-agents **in parallel** using @ mentions in a single message.
+
+The 4 agents to invoke are:
+1. `@security-analyzer` - Uses ollama/deepseek-coder
+2. `@architecture-analyzer` - Uses ollama/qwen2.5-coder:14b
+3. `@quality-analyzer` - Uses ollama/phi4:14b
+4. `@style-analyzer` - Uses ollama/mistral:7b
+
+These agents are configured in config.json as subagents with specific Ollama models and no tool access.
+
+Create a single message that invokes all 4 agents in parallel like this:
+
+**Sub-Agent 1: Security Analysis**
+Agent: `@security-analyzer`
+Message format:
+```
+@security-analyzer
+
+Analyze the following code file for security vulnerabilities and issues:
+
+```
+{file_contents}
+```
+
+Provide:
+1. Executive Summary (2-3 sentences)
+2. Critical Issues (if any)
+3. Warnings (potential issues)
+4. Recommendations
+5. Security Score (1-10, where 10 is most secure)
+```
+
+**Sub-Agent 2: Architecture Analysis**
+Agent: `@architecture-analyzer`
+Message format:
+```
+@architecture-analyzer
+
+Analyze the following code file for architectural patterns, design decisions, and structural quality:
+
+```
+{file_contents}
+```
+
+Provide:
+1. Executive Summary (2-3 sentences)
+2. Architectural Patterns Identified
+3. Strengths
+4. Areas for Improvement
+5. Architecture Score (1-10, where 10 is best architecture)
+```
+
+**Sub-Agent 3: Code Quality Analysis**
+Agent: `@quality-analyzer`
+Message format:
+```
+@quality-analyzer
+
+Analyze the following code file for overall code quality, maintainability, and best practices:
+
+```
+{file_contents}
+```
+
+Provide:
+1. Executive Summary (2-3 sentences)
+2. Quality Metrics
+3. Strengths
+4. Issues Found
+5. Refactoring Suggestions
+6. Quality Score (1-10, where 10 is highest quality)
+```
+
+**Sub-Agent 4: Code Style Quality Analysis**
+Agent: `@style-analyzer`
+Message format:
+```
+@style-analyzer
+
+Analyze the following code file for style consistency, readability, and formatting quality:
+
+```
+{file_contents}
+```
+
+Provide:
+1. Executive Summary (2-3 sentences)
+2. Style Consistency Assessment
+3. Readability Evaluation
+4. Style Issues Found
+5. Style Improvement Suggestions
+6. Style Score (1-10, where 10 is best style)
+```
+
+**CRITICAL**: You must send a SINGLE message that contains all 4 @ mentions above. This will invoke all 4 agents in parallel, each using their configured Ollama model from config.json.
+
+### Step 4: Aggregate Results
+Once all 4 sub-agents have completed their analysis:
+- Collect all outputs
+- Format them into a comprehensive markdown report
+
+### Step 5: Generate Final Report
+Create a markdown file named `code-analysis-report-{timestamp}.md` in the current directory with the following structure:
+
+```markdown
+# Code Analysis Report
+
+**File Analyzed**: {file_path}
+**Analysis Date**: {timestamp}
+**Total Lines**: {line_count}
+
+---
+
+## Executive Summary
+
+{Generate a 3-4 sentence overall summary combining insights from all analyses}
+
+**Overall Scores**:
+- Security: {score}/10
+- Architecture: {score}/10
+- Code Quality: {score}/10
+- Code Style: {score}/10
+- **Combined Score**: {average}/10
+
+---
+
+## 🔒 Security Analysis
+
+{Output from Sub-Agent 1}
+
+---
+
+## 🏗️ Architecture Analysis
+
+{Output from Sub-Agent 2}
+
+---
+
+## ✅ Code Quality Analysis
+
+{Output from Sub-Agent 3}
+
+---
+
+## 🎨 Code Style Analysis
+
+{Output from Sub-Agent 4}
+
+---
+
+## Overall Recommendations
+
+{Synthesize top 5-7 recommendations across all analysis types, prioritized by impact}
+
+---
+
+## Analysis Metadata
+
+- **Analysis Duration**: {duration}
+- **Models Used**:
+  - Security: deepseek-coder
+  - Architecture: qwen2.5-coder:14b
+  - Code Quality: phi4:14b
+  - Code Style: mistral:7b
+
+---
+
+*Generated by /local-demo command*
+```
+
+### Step 6: Confirm Completion
+- Output the path to the generated report
+- Display the overall combined score
+- Provide a 1-sentence summary of the most critical finding
+
+## Important Notes
+
+- All 4 sub-agents MUST be launched in parallel (single message with 4 task tool calls)
+- Sub-agents will NOT have access to tools - only provide them the file contents
+- Each sub-agent should be given clear, specific instructions in their prompt
+- The timestamp should be in ISO format (YYYY-MM-DD-HH-MM-SS)
+- If the file is very large (>10000 lines), warn the user that analysis may take longer
+- Handle errors gracefully - if a sub-agent fails, note it in the report and continue with others
+- The final report should be comprehensive but scannable with clear sections and headers
