@@ -6,21 +6,21 @@ temperature: 0.25
 top_p: 0.92
 color: "#00B4D8"
 tools:
-  task: false
-  context7_resolve-library-id: false
-  context7_get-library-docs: false
-  github_*: false
-  azure-devops_*: false
-  webfetch: false
-  read: false
-  write: false
-  edit: false
-  list: false
-  bash: false
-  glob: false
-  grep: false
-  todowrite: false
-  todoread: false
+  task: true
+  context7_resolve-library-id: true
+  context7_get-library-docs: true
+  github_*: true
+  azure-devops_*: true
+  webfetch: true
+  read: true
+  write: true
+  edit: true
+  list: true
+  bash: true
+  glob: true
+  grep: true
+  todowrite: true
+  todoread: true
 permission:
   edit: allow
   bash: ask

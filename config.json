@@ -1,45 +1,152 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "keybinds": {
-    "leader": "ctrl+x",
-    "app_exit": "ctrl+c,ctrl+d,<leader>q",
-    "editor_open": "<leader>e",
-    "theme_list": "<leader>t",
-    "sidebar_toggle": "<leader>b",
-    "status_view": "<leader>s",
-    "session_export": "<leader>x",
-    "session_new": "<leader>n",
-    "session_list": "<leader>l",
-    "session_timeline": "<leader>g",
-    "session_share": "none",
-    "session_unshare": "none",
-    "session_interrupt": "escape",
-    "session_compact": "<leader>c",
-    "session_child_cycle": "cmd+]",
-    "session_child_cycle_reverse": "cmd+[",
-    "messages_page_up": "pageup",
-    "messages_page_down": "pagedown",
-    "messages_half_page_up": "ctrl+alt+u",
-    "messages_half_page_down": "ctrl+alt+d",
-    "messages_first": "ctrl+g,home",
-    "messages_last": "ctrl+alt+g,end",
-    "messages_copy": "<leader>y",
-    "messages_undo": "<leader>u",
-    "messages_redo": "<leader>r",
-    "messages_toggle_conceal": "<leader>h",
-    "model_list": "<leader>m",
-    "model_cycle_recent": "f2",
-    "model_cycle_recent_reverse": "shift+f2",
-    "command_list": "ctrl+p",
-    "agent_list": "<leader>a",
-    "agent_cycle": "tab",
-    "agent_cycle_reverse": "shift+tab",
-    "input_clear": "ctrl+c",
-    "input_forward_delete": "ctrl+d",
-    "input_paste": "ctrl+v",
-    "input_submit": "enter",
-    "input_newline": "shift+enter,ctrl+j",
-    "history_previous": "up",
-    "history_next": "down"
+  "provider": {
+      "amazon-bedrock": {
+          "npm": "@ai-sdk/amazon-bedrock",
+          "name": "Amazon Bedrock",
+          "models": {
+              "anthropic.claude-sonnet-4-5-20250929-v1:0": {
+                  "name": "Claude Sonnet 4.5",
+                  "contextWindow": 200000,
+                  "maxOutputTokens": 8192
+              }
+          }
+      },
+      "ollama": {
+          "npm": "@ai-sdk/openai-compatible",
+          "name": "Ollama",
+          "options": {
+              "baseURL": "http://localhost:11434/v1",
+              "num_ctx": 32768
+          },
+          "models": {
+              "gpt-oss:20b": {
+                  "name": "GPT OSS:20b (14GB)",
+                  "contextWindow": 32768,
+                  "maxOutputTokens": 8192
+              },
+              "llama3.2:3b": {
+                  "name": "Llama 3.2 3B",
+                  "contextWindow": 32768,
+                  "maxOutputTokens": 8192
+              },
+              "llama3.1:8b": {
+                  "name": "Llama 3.1 8B",
+                  "contextWindow": 32768,
+                  "maxOutputTokens": 8192
+              },
+              "mistral:7b": {
+                  "name": "Mistral 7B",
+                  "contextWindow": 32768,
+                  "maxOutputTokens": 8192
+              },
+              "phi4:14b": {
+                  "name": "Phi 4 14B",
+                  "contextWindow": 16384,
+                  "maxOutputTokens": 4096
+              },
+              "qwen2.5:7b": {
+                  "name": "Qwen 2.5 7B",
+                  "contextWindow": 32768,
+                  "maxOutputTokens": 8192
+              },
+              "qwen2.5-coder:14b": {
+                  "name": "Qwen 2.5 Coder 14B",
+                  "contextWindow": 32768,
+                  "maxOutputTokens": 8192
+              },
+              "qwen2.5-coder:7b": {
+                  "name": "Qwen 2.5 Coder 7B",
+                  "contextWindow": 32768,
+                  "maxOutputTokens": 8192
+              },
+              "codellama": {
+                  "name": "Code Llama",
+                  "contextWindow": 16384,
+                  "maxOutputTokens": 4096
+              },
+              "deepseek-coder": {
+                  "name": "DeepSeek Coder",
+                  "contextWindow": 16384,
+                  "maxOutputTokens": 4096
+              },
+              "starcoder2": {
+                  "name": "StarCoder 2",
+                  "contextWindow": 16384,
+                  "maxOutputTokens": 4096
+              },
+              "llama3.1:70b": {
+                  "name": "Llama 3.1 70B",
+                  "contextWindow": 32768,
+                  "maxOutputTokens": 8192
+              },
+              "mixtral:8x7b": {
+                  "name": "Mixtral 8x7B",
+                  "contextWindow": 32768,
+                  "maxOutputTokens": 8192
+              }
+          }
+      }
+  },
+  "mcp": {
+    "github": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GIT_AUTH_TOKEN}"
+      }
+    },
+    "context7": {
+        "type": "remote",
+        "url": "https://mcp.context7.com/mcp",
+        "headers": {
+            "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
+        },
+        "enabled": true
+    },
+    "azure-devops": {
+      "type": "local",
+      "command": ["npx", "-y", "@azure-devops/mcp", "bellefieldsystems"],
+      "enabled": true
+    },
+    "synthia": {
+        "type": "local",
+        "command": ["node", "/Users/michael.schmitt/sc/hackathon/Synthia/apps/mcp-server/build/index.js"],
+        "enabled": false,
+        "environment": {
+            "USE_API": "true"
+        }
+    },
+    "tts": {
+      "type": "local",
+      "command": ["mcp-tts", "--suppress-speaking-output"],
+      "enabled": true,
+      "environment": {
+        "ELEVENLABS_API_KEY": "{env:ELEVENLABS_API_KEY}",
+        "ELEVENLABS_VOICE_ID": "{env:ELEVENLABS_VOICE_ID}",
+        "MCP_TTS_SUPPRESS_SPEAKING_OUTPUT": "true",
+        "MCP_TTS_ALLOW_CONCURRENT": "false"
+      }
+    },
+    "puppeteer": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-puppeteer"],
+      "enabled": true
+    },
+
+
+    "sequential-thinking": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "enabled": true
+    },
+    "figma": {
+      "type": "local",
+      "command": ["npx", "-y", "figma-developer-mcp", "--stdio"],
+      "enabled": true,
+      "environment": {
+        "FIGMA_API_KEY": "{env:FIGMA_API_KEY}"
+      }
+    }
   }
 }
