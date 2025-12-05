@@ -7,11 +7,11 @@ top_p: 0.92
 color: "#3A86FF"
 tools:
   task: true
-  context7_resolve-library-id: false
-  context7_get-library-docs: false
-  github_*: false
-  azure-devops_*: false
-  webfetch: false
+  context7_resolve-library-id: true
+  context7_get-library-docs: true
+  github_*: true
+  azure-devops_*: true
+  webfetch: true
   read: true
   write: true
   edit: true
