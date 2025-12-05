@@ -2,8 +2,11 @@
 description: GPT OSS 20b
 mode: primary
 model: ollama/gpt-oss:20b
-temperature: 0.25
-top_p: 0.92
+temperature: 0.2
+top_p: 0.95
+top_k: 40
+max_new_tokens: 4096
+repetition_penalty: 1.1
 color: "#00B4D8"
 tools:
   task: true
@@ -23,6 +26,6 @@ tools:
   todoread: true
 permission:
   edit: allow
-  bash: ask
-  doom_loop: ask
+  bash: allow
+  doom_loop: allow
 ---
