@@ -21,10 +21,10 @@ tools:
   todowrite: true
   todoread: true
   task: false
-  context7_*: false
+  context7_*: true
   github_*: false
   azure-devops_*: false
-  webfetch: false
+  webfetch: true
 permission:
   edit: allow
   bash: allow
@@ -41,5 +41,3 @@ permission:
 - Repetition penalty: 1.0 (disabled to allow parameter repetition)
 
 **Expected Behavior:** Most consistent tool call structure, may be less creative in problem-solving.
-
-**Test with:** Simple file read/write operations, then bash commands.
