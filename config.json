@@ -81,6 +81,38 @@
       }
   },
   "agent": {
+      "GPT-OSS:20b Planner": {
+          "description": "Primary coding agent using local GPT-OSS via Ollama.",
+          "model": "ollama/gpt-oss:20b",
+          "tools": {
+              "*": false,
+              "read": true,
+              "grep": true,
+              "glob": true,
+              "list": true,
+              "todoread": true,
+              "webfetch": true
+          },
+          "prompt": "{file:./agent/gpt-oss-planner.md}"
+      },
+      "GPT-OSS:20b Builder": {
+          "description": "Hands-on coding agent with full tool access for building and implementing solutions.",
+          "model": "ollama/gpt-oss:20b-16k-tools",
+          "tools": {
+              "*": false,
+              "read": true,
+              "write": true,
+              "edit": true,
+              "bash": true,
+              "grep": true,
+              "glob": true,
+              "list": true,
+              "todoread": true,
+              "todowrite": true,
+              "webfetch": true
+          },
+          "prompt": "{file:./agent/gpt-oss-builder.md}"
+      },
       "testing-gpt": {
           "description": "Primary coding agent using local GPT-OSS via Ollama.",
           "model": "ollama/gpt-oss:20b-16k-tools",
@@ -115,7 +147,7 @@
         "headers": {
             "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
         },
-        "enabled": true
+        "enabled": false
     },
     "azure-devops": {
       "type": "local",
@@ -127,31 +159,31 @@
         "command": ["node", "/Users/michael.schmitt/sc/hackathon/Synthia/apps/mcp-server/build/index.js"],
         "enabled": false,
         "environment": {
-            "USE_API": "true"
+            "USE_API": "false"
         }
     },
     "tts": {
       "type": "local",
       "command": ["mcp-tts", "--suppress-speaking-output"],
-      "enabled": true,
+      "enabled": false,
       "environment": {
         "ELEVENLABS_API_KEY": "{env:ELEVENLABS_API_KEY}",
         "ELEVENLABS_VOICE_ID": "{env:ELEVENLABS_VOICE_ID}",
-        "MCP_TTS_SUPPRESS_SPEAKING_OUTPUT": "true",
+        "MCP_TTS_SUPPRESS_SPEAKING_OUTPUT": "false",
         "MCP_TTS_ALLOW_CONCURRENT": "false"
       }
     },
     "puppeteer": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-puppeteer"],
-      "enabled": true
+      "enabled": false
     },
 
 
     "sequential-thinking": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "enabled": true
+      "enabled": false
     },
     "figma": {
       "type": "local",
