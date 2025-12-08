@@ -30,6 +30,12 @@ create_symlink() {
         return
     fi
     
+    # If target exists and is a real directory (not a symlink), skip with warning
+    if [[ -d "$target" ]] && [[ ! -L "$target" ]]; then
+        echo -e "${YELLOW}⊘${NC} Skipping (existing directory): $relative_path"
+        return
+    fi
+    
     # Check if target already exists
     if [[ -e "$target" ]] || [[ -L "$target" ]]; then
         # Check if it's already a symlink pointing to our source
@@ -48,34 +54,9 @@ create_symlink() {
         return
     fi
     
-    # Create parent directory if needed
-    local target_parent="$(dirname "$target")"
-    mkdir -p "$target_parent"
-    
     # Create the symlink
     ln -s "$source" "$target"
     echo -e "${GREEN}+${NC} Linked: $relative_path"
-}
-
-# Function to recursively process directory
-process_directory() {
-    local source_dir="$1"
-    local target_dir="$2"
-    
-    # Process all files and directories in source
-    while IFS= read -r -d '' item; do
-        local relative_path="${item#$SCRIPT_DIR/}"
-        local target_path="$TARGET_DIR/$relative_path"
-        
-        if [[ -d "$item" ]]; then
-            # For directories, just ensure they exist in target and recurse
-            mkdir -p "$target_path"
-            process_directory "$item" "$target_path"
-        else
-            # For files, create symlink
-            create_symlink "$item" "$target_path"
-        fi
-    done < <(find "$source_dir" -maxdepth 1 -mindepth 1 -print0 | sort -z)
 }
 
 echo "Starting symlink installation..."
@@ -95,14 +76,8 @@ for item in "$SCRIPT_DIR"/*; do
         continue
     fi
     
-    if [[ -d "$item" ]]; then
-        # For directories, create target directory and process contents
-        mkdir -p "$target_path"
-        process_directory "$item" "$target_path"
-    else
-        # For files, create symlink
-        create_symlink "$item" "$target_path"
-    fi
+    # Symlink everything (files AND directories)
+    create_symlink "$item" "$target_path"
 done
 
 echo ""

@@ -5,7 +5,7 @@
           "npm": "@ai-sdk/openai-compatible",
           "name": "Ollama",
           "options": {
-              "baseURL": "http://192.168.1.131:11434/v1",
+              "baseURL": "{env:OLLAMA_BASE_URL}",
               "num_ctx": 32768
           },
           "models": {
@@ -97,7 +97,7 @@
               "todowrite": true,
               "webfetch": true  // often best to start without web tools
           },
-          "prompt": "{file:./agent/local-gpt-oss.md}"
+          "prompt": "{file:./agent/gpt-oss-tools-tuned.md}"
       }
   },
   "mcp": {
