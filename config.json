@@ -186,6 +186,16 @@
       "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
       "enabled": true
     },
+    "beads": {
+      "type": "local",
+      "command": ["beads-mcp"],
+      "enabled": true
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+      "enabled": true
+    },
     "figma": {
       "type": "local",
       "command": ["npx", "-y", "figma-developer-mcp", "--stdio"],
