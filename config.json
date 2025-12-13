@@ -142,7 +142,7 @@
       "environment": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GIT_AUTH_TOKEN}"
       },
-      "enabled": true
+      "enabled": {env:OC_ENABLE_GIT_MCP}
     },
     "context7": {
         "type": "remote",
@@ -150,17 +150,17 @@
         "headers": {
             "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
         },
-        "enabled": true
+      "enabled": {env:OC_ENABLE_CONTEXT7_MCP}
     },
     "azure-devops": {
       "type": "local",
       "command": ["npx", "-y", "@azure-devops/mcp", "bellefieldsystems"],
-      "enabled": true
+      "enabled": {env:OC_ENABLE_AZURE_MCP},
     },
     "synthia": {
         "type": "local",
         "command": ["node", "/Users/michael.schmitt/sc/hackathon/Synthia/apps/mcp-server/build/index.js"],
-        "enabled": true,
+        "enabled": {env:OC_ENABLE_SYNTHIA_MCP},
         "environment": {
             "USE_API": "true"
         }
@@ -168,7 +168,7 @@
     "tts": {
       "type": "local",
       "command": ["mcp-tts", "--suppress-speaking-output"],
-      "enabled": true,
+      "enabled": {env:OC_ENABLE_TTS_MCP},
       "environment": {
         "ELEVENLABS_API_KEY": "{env:ELEVENLABS_API_KEY}",
         "ELEVENLABS_VOICE_ID": "{env:ELEVENLABS_VOICE_ID}",
@@ -179,27 +179,22 @@
     "puppeteer": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-puppeteer"],
-      "enabled": true
+      "enabled": {env:OC_ENABLE_PUPPET_MCP}
     },
     "sequential-thinking": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "enabled": true
+      "enabled": {env:OC_ENABLE_THINKING_MCP}
     },
     "beads": {
       "type": "local",
       "command": ["beads-mcp"],
-      "enabled": true
-    },
-    "chrome-devtools": {
-      "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
-      "enabled": true
+      "enabled": {env:OC_ENABLE_BEADS_MCP}
     },
     "figma": {
       "type": "local",
       "command": ["npx", "-y", "figma-developer-mcp", "--stdio"],
-      "enabled": false,
+      "enabled": {env:OC_ENABLE_FIGMA_MCP},
       "environment": {
         "FIGMA_API_KEY": "{env:FIGMA_API_KEY}"
       }
