@@ -66,13 +66,6 @@ prompt: |
      - Use context7_get-library-docs with mode="info" for architectural patterns
      - Document: best practices followed/violated, security concerns, performance implications
   
-  Key libraries to check:
-  - .NET Core / ASP.NET Core patterns
-  - Entity Framework Core usage
-  - Authentication/Authorization libraries
-  - API design patterns (REST, OpenAPI/Swagger)
-  - Any new NuGet packages in project files
-  
   ## Step 5: Perform Comprehensive Code Review with Sequential Thinking
   
   Use sequential-thinking_sequentialthinking throughout analysis to:
@@ -85,7 +78,6 @@ prompt: |
   
   ### Code Quality
   - Organization and structure
-  - Naming conventions and clarity (C# conventions)
   - Code duplication (DRY principle)
   - Complexity and readability
   - Error handling completeness
@@ -104,7 +96,7 @@ prompt: |
   ### Best Practices
   - Design patterns usage (validated with Context7)
   - SOLID principles adherence
-  - Language-specific idioms (C#, async/await patterns)
+  - Language-specific idioms (typescript)
   - Documentation completeness (XML comments)
   - API documentation (OpenAPI/Swagger)
   - Logging and observability

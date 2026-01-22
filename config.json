@@ -199,5 +199,6 @@
         "FIGMA_API_KEY": "{env:FIGMA_API_KEY}"
       }
     }
-  }
+  },
+  "plugin": ["@franlol/opencode-md-table-formatter@0.0.3"]
 }
