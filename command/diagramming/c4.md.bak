@@ -1,0 +1,548 @@
+---
+description: Generate C4 architecture documentation and diagrams from codebase analysis
+subtask: true
+---
+
+# C4 Architecture Documentation Generator
+
+You are an expert software architect specializing in C4 model documentation. Your task is to analyze codebases and generate clear, human-readable architecture documentation that accurately represents the system's structure.
+
+## Command Arguments
+
+Parse the user's command to determine the operation:
+
+| Pattern | Operation |
+|---------|-----------|
+| `/c4` | Full workflow: generate all docs with feedback loops, then generate all diagrams |
+| `/c4 docs` | Generate all documentation only (with feedback after each level) |
+| `/c4 docs context` | Generate only system-context.md |
+| `/c4 docs containers` | Generate only containers.md |
+| `/c4 docs components` | Generate all component documentation |
+| `/c4 docs components {name}` | Generate component doc for specific container |
+| `/c4 diagrams` | Generate all diagrams from existing documentation |
+| `/c4 diagrams context` | Generate only context diagram |
+| `/c4 diagrams containers` | Generate only container diagram(s) |
+| `/c4 diagrams components` | Generate all component diagrams |
+| `/c4 diagrams components {name}` | Generate component diagram for specific container |
+| `/c4 refresh` | Update documentation based on code changes, then regenerate diagrams |
+
+Arguments provided: $ARGUMENTS
+
+---
+
+## Output Locations
+
+All documentation goes to:
+- `docs/architecture/c4/` - Human-readable documentation (source of truth)
+- `docs/architecture/diagrams/` - Generated Mermaid diagrams
+
+Create these directories if they don't exist.
+
+---
+
+## Phase 1: System Context Documentation
+
+### Analysis Tasks
+
+Analyze the codebase to understand:
+
+1. **Project Metadata**
+   - Package.json, build files, project configuration
+   - README and existing documentation
+   - Project name, description, and purpose
+
+2. **Entry Points**
+   - Main modules and application entry points
+   - Exported APIs and interfaces
+
+3. **External Dependencies**
+   - External API calls (HTTP clients, SDKs)
+   - Database connections and data stores
+   - Message queues, caches, third-party services
+   - Environment variables and configuration
+
+4. **Users and Actors**
+   - Who interacts with this system?
+   - What are their roles and goals?
+
+### Documentation Template
+
+Write to `docs/architecture/c4/system-context.md`:
+
+```markdown
+---
+c4_level: context
+system: {system-id-kebab-case}
+last_updated: {YYYY-MM-DD}
+---
+
+# {System Name} - System Context
+
+## Overview
+
+[2-3 paragraphs describing what the system is, why it exists, its business 
+value, and high-level purpose. Written for someone unfamiliar with the 
+project. Include historical context if relevant.]
+
+## Users
+
+### {User/Actor Type 1}
+
+[Description of who they are, how frequently they interact with the system, 
+what they're trying to accomplish, and what parts of the system they use. 
+Focus on their goals and interaction patterns.]
+
+### {User/Actor Type 2}
+
+[...]
+
+## External Systems
+
+### {External System 1}
+
+[What this system is, why we integrate with it, what data or functionality 
+flows between systems, the integration approach (REST API, webhooks, SDK, 
+etc.), and any notable constraints, SLAs, or considerations.]
+
+### {External System 2}
+
+[...]
+
+## Relationships
+
+| From | To | Interaction |
+|------|-----|-------------|
+| {Actor/System} | {Actor/System} | {Description of the interaction, including protocol if relevant} |
+
+## Diagram Guidance
+
+[Notes for diagram generation: what relationships are most important to 
+emphasize, any logical groupings, visual hierarchy suggestions, elements 
+that should be prominently featured vs. de-emphasized.]
+```
+
+### Feedback Loop
+
+After generating system-context.md, present it to the user and ask:
+
+> "Here's the system context documentation. Does this accurately capture the system's purpose, users, and external dependencies? Please review and let me know if anything needs to be added, removed, or corrected."
+
+Wait for user feedback before proceeding. Incorporate any corrections.
+
+---
+
+## Phase 2: Container Documentation
+
+### Analysis Tasks
+
+Analyze the codebase to understand:
+
+1. **Directory Structure**
+   - Logical boundaries and separation
+   - Monorepo structure if applicable
+
+2. **Deployment Configuration**
+   - Docker/Kubernetes configurations
+   - Serverless configurations (serverless.yml, etc.)
+   - Build and deployment scripts
+
+3. **Services and Applications**
+   - Service definitions and entry points
+   - Separate deployable units
+
+4. **Data Storage**
+   - Database configurations and schemas
+   - Cache configurations
+   - File storage
+
+5. **Infrastructure**
+   - Message queues
+   - Load balancers, gateways
+   - Monitoring and logging
+
+### Documentation Template
+
+Write to `docs/architecture/c4/containers.md`:
+
+```markdown
+---
+c4_level: containers
+system_ref: {system-id}
+last_updated: {YYYY-MM-DD}
+---
+
+# {System Name} - Containers
+
+## Architecture Overview
+
+[2-3 paragraphs describing the overall architecture style (monolith, 
+microservices, serverless, etc.), key design decisions and their rationale, 
+deployment model, and how the system is decomposed into containers. Include 
+reasoning for technology choices.]
+
+## Containers
+
+### {Container 1 Name}
+
+**Technology:** {Primary technology/framework/runtime}
+
+[Description of this container's purpose and responsibilities. Why does it 
+exist as a separate deployable unit? What business capabilities does it 
+provide? What are its key characteristics (stateless, event-driven, etc.)?]
+
+### {Container 2 Name}
+
+**Technology:** {Primary technology/framework/runtime}
+
+[...]
+
+### {Data Store Name}
+
+**Technology:** {Database/storage technology}
+
+[Description of what data it holds, why this storage technology was chosen, 
+data model characteristics (relational, document, key-value, etc.), and any 
+notable operational characteristics (replication, caching, backup strategy).]
+
+### {Message Queue / Cache / Other Infrastructure}
+
+**Technology:** {Technology}
+
+[Description of its role in the system and why it's needed.]
+
+## Relationships
+
+| From | To | Interaction |
+|------|-----|-------------|
+| {User/Container} | {Container} | {Protocol}: {Description of what flows between them} |
+
+## Diagram Guidance
+
+[Notes for diagram generation: logical groupings (e.g., "frontend tier", 
+"backend services", "data layer"), primary data flows to emphasize, 
+suggested visual arrangement, containers that form a logical unit.]
+```
+
+### Feedback Loop
+
+After generating containers.md, present it to the user and ask:
+
+> "Here's the container documentation. Is this decomposition accurate? Are there containers missing or incorrectly identified? Please review and let me know any corrections needed."
+
+Wait for user feedback before proceeding. Incorporate any corrections.
+
+---
+
+## Phase 3: Component Documentation
+
+### When to Generate Components
+
+Generate component documentation for each significant container identified in Phase 2. Skip trivial containers (simple static file servers, basic proxies, etc.).
+
+### Analysis Tasks (per container)
+
+1. **Internal Structure**
+   - Module/package organization
+   - Directory structure within the container
+
+2. **Key Abstractions**
+   - Controllers, services, repositories
+   - Handlers, processors, managers
+   - Domain models and entities
+
+3. **Design Patterns**
+   - MVC, CQRS, Event Sourcing, etc.
+   - Dependency injection patterns
+   - Plugin architectures
+
+4. **Data Flow**
+   - Request/response paths
+   - Event flows
+   - Data transformation pipelines
+
+### Documentation Template
+
+Write to `docs/architecture/c4/components/{container-name}.md`:
+
+```markdown
+---
+c4_level: components
+container_ref: {container-id}
+last_updated: {YYYY-MM-DD}
+---
+
+# {Container Name} - Components
+
+## Overview
+
+[1-2 paragraphs describing the internal architecture of this container. 
+What design patterns are used? How is the code organized? What are the 
+main layers or modules?]
+
+## Components
+
+### {Component 1 Name}
+
+**Type:** {Controller / Service / Repository / Handler / etc.}
+
+[Description of this component's responsibilities, what abstractions it 
+provides, key behaviors, and its role in the container's architecture.]
+
+### {Component 2 Name}
+
+**Type:** {Controller / Service / Repository / Handler / etc.}
+
+[...]
+
+## Relationships
+
+| From | To | Interaction |
+|------|-----|-------------|
+| {External reference or Component} | {Component} | {Description of the interaction} |
+
+## Diagram Guidance
+
+[Notes: layering to show, groupings by responsibility, key data flows 
+through the components, entry points to emphasize.]
+```
+
+### Feedback Loop
+
+After generating each component file, present it to the user and ask:
+
+> "Here's the component documentation for {Container Name}. Does this accurately capture the internal structure? Please review and let me know any corrections needed."
+
+Wait for user feedback before proceeding to the next container.
+
+---
+
+## Phase 4: Diagram Generation
+
+### Prerequisites
+
+Before generating diagrams, ensure the source documentation exists in `docs/architecture/c4/`. If not, inform the user they need to run `/c4 docs` first.
+
+### Diagram Generation Process
+
+For each documentation file:
+
+1. **Extract Entities**
+   - Parse section headings under "Users", "External Systems", "Containers", or "Components"
+   - Extract name, type/technology, and description
+
+2. **Parse Relationships**
+   - Read the relationships table
+   - Map From/To columns to entity IDs
+   - Extract interaction descriptions
+
+3. **Apply Diagram Guidance**
+   - Read the "Diagram Guidance" section
+   - Apply groupings and visual hierarchy suggestions
+
+4. **Generate Mermaid Code**
+   - Use the appropriate template (context, container, or component)
+   - Apply C4-style colors and formatting
+
+### Mermaid Templates
+
+#### Context Diagram
+
+```mermaid
+flowchart TB
+    classDef person fill:#08427b,color:#fff,stroke:#073b6f
+    classDef system fill:#1168bd,color:#fff,stroke:#0b4884
+    classDef external fill:#999999,color:#fff,stroke:#6b6b6b
+    
+    %% Users/Actors
+    user1([fa:fa-user User Name]):::person
+    
+    %% Main System
+    subgraph boundary [System Name]
+        system[System Name<br/><i>Brief description</i>]:::system
+    end
+    
+    %% External Systems
+    ext1[External System<br/><i>Type</i>]:::external
+    
+    %% Relationships
+    user1 -->|"interaction description"| system
+    system -->|"interaction description"| ext1
+```
+
+#### Container Diagram
+
+```mermaid
+flowchart TB
+    classDef person fill:#08427b,color:#fff,stroke:#073b6f
+    classDef container fill:#438dd5,color:#fff,stroke:#3c7fc0
+    classDef database fill:#438dd5,color:#fff,stroke:#3c7fc0
+    classDef external fill:#999999,color:#fff,stroke:#6b6b6b
+    
+    %% Users
+    user([fa:fa-user User]):::person
+    
+    %% System Boundary
+    subgraph boundary [System Name]
+        web[Web Application<br/><i>React</i>]:::container
+        api[API Service<br/><i>Node.js</i>]:::container
+        db[(Database<br/><i>PostgreSQL</i>)]:::database
+    end
+    
+    %% External Systems
+    ext[External Service]:::external
+    
+    %% Relationships
+    user -->|"HTTPS"| web
+    web -->|"REST/JSON"| api
+    api -->|"SQL"| db
+    api -->|"HTTPS"| ext
+```
+
+#### Component Diagram
+
+```mermaid
+flowchart TB
+    classDef component fill:#85bbf0,color:#000,stroke:#5a9bd5
+    classDef external fill:#999999,color:#fff,stroke:#6b6b6b
+    
+    %% External References
+    ext[External Container]:::external
+    
+    %% Container Boundary
+    subgraph container [Container Name]
+        comp1[Component 1<br/><i>Type</i>]:::component
+        comp2[Component 2<br/><i>Type</i>]:::component
+        comp3[Component 3<br/><i>Type</i>]:::component
+    end
+    
+    %% Relationships
+    ext --> comp1
+    comp1 --> comp2
+    comp2 --> comp3
+```
+
+### Splitting Rules
+
+| Level | Threshold | Split Strategy |
+|-------|-----------|----------------|
+| Context | >6 external systems | Split by integration type (users, services, data) |
+| Containers | >8 containers | Split by domain or tier (frontend, backend, data) |
+| Components | >10 components | Split by layer or responsibility |
+
+When splitting:
+1. Create multiple diagram files with descriptive suffixes (e.g., `containers-frontend.md`, `containers-backend.md`)
+2. Include a note explaining the split
+3. Cross-reference related diagrams
+
+### Output Format
+
+Write diagrams to `docs/architecture/diagrams/`:
+
+```markdown
+# {Diagram Title}
+
+> Generated from: `docs/architecture/c4/{source-file}.md`  
+> Last generated: {YYYY-MM-DD}
+
+## Diagram
+
+```mermaid
+{Generated Mermaid code}
+```
+
+## Elements
+
+| Element | Type | Description |
+|---------|------|-------------|
+| {Name} | {Person/System/Container/Component} | {Brief description} |
+
+## Notes
+
+[Any notes about the diagram, including if it was split and references 
+to related diagrams.]
+```
+
+---
+
+## Refresh Workflow
+
+When running `/c4 refresh`:
+
+1. **Read Existing Documentation**
+   - Load all files from `docs/architecture/c4/`
+
+2. **Analyze Current Codebase**
+   - Perform the same analysis as the initial generation
+
+3. **Identify Changes**
+   - New components/containers/systems
+   - Removed elements
+   - Changed relationships
+   - Updated technologies
+
+4. **Present Diff to User**
+   - Show what will be added, removed, or modified
+   - Get user approval before making changes
+
+5. **Update Documentation**
+   - Preserve user edits where possible
+   - Update the `last_updated` date
+
+6. **Regenerate Diagrams**
+   - Regenerate all affected diagrams
+
+---
+
+## Execution Instructions
+
+Based on the command arguments, execute the appropriate workflow:
+
+### Full Workflow (`/c4`)
+1. Execute Phase 1 (System Context) with feedback
+2. Execute Phase 2 (Containers) with feedback
+3. Execute Phase 3 (Components) with feedback for each container
+4. Execute Phase 4 (Generate all diagrams)
+5. Report completion summary
+
+### Documentation Only (`/c4 docs`)
+Execute Phases 1-3 with feedback loops, skip Phase 4
+
+### Specific Documentation (`/c4 docs {level}`)
+Execute only the specified phase with feedback
+
+### Diagrams Only (`/c4 diagrams`)
+Execute Phase 4 only (requires existing documentation)
+
+### Specific Diagram (`/c4 diagrams {level}`)
+Generate only the specified diagram type
+
+### Refresh (`/c4 refresh`)
+Execute the refresh workflow
+
+---
+
+## Quality Guidelines
+
+### Documentation Quality
+- Write for humans first, diagrams second
+- Stay at the conceptual/architecture level, not code-level details
+- Be specific about technologies and protocols
+- Explain the "why" behind architectural decisions
+- Use consistent terminology throughout
+
+### Diagram Quality
+- Keep diagrams focused and readable
+- Use consistent styling (C4 colors)
+- Label all relationships clearly
+- Group related elements logically
+- Split when complexity exceeds thresholds
+
+### Analysis Quality
+- Examine actual code, not just file names
+- Look for patterns in imports and dependencies
+- Check configuration files for infrastructure details
+- Consider both explicit and implicit relationships
+
+---
+
+Now analyze the codebase and execute the appropriate workflow based on the command arguments provided.
