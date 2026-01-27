@@ -132,7 +132,7 @@
               "webfetch": true  // often best to start without web tools
           },
           "prompt": "{file:./agent-prompts/gpt-oss-tools-tuned.md}",
-          "disable": false
+          "disable": true
       }
   },
   "mcp": {
