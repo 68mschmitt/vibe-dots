@@ -31,6 +31,15 @@ All OpenCode proprietary models are fully functional:
 - `amazon-bedrock/anthropic.claude-sonnet-4-5-20250929-v1:0`
 - `amazon-bedrock/anthropic.claude-opus-4-20250514-v1:0`
 - `amazon-bedrock/anthropic.claude-opus-4-1-20250805-v1:0`
+- `amazon-bedrock/anthropic.claude-opus-4-5-20251101-v1:0`
+
+#### OpenAI
+- `github-copilot/gpt-5.2`
+- `github-copilot/gpt-5.2-codex`
+
+#### Google
+- `github-copilot/gemini-3-flash`
+- `github-copilot/gemini-3-pro`
 
 ### Meta Llama Models (2 models)
 
