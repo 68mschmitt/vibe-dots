@@ -27,13 +27,6 @@ echo ""
 
 echo ""
 echo "=========================================="
-echo "Step 2: Creating tuned Ollama model"
-echo "=========================================="
-echo ""
-"$SCRIPT_DIR/create-tuned-model.sh"
-
-echo ""
-echo "=========================================="
 echo "✓ Setup Complete!"
 echo "=========================================="
 echo ""

@@ -7,17 +7,17 @@
         "headers": {
             "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
         },
-      "enabled": {env:OC_ENABLE_CONTEXT7_MCP}
+      "enabled": true
     },
     "puppeteer": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-puppeteer"],
-      "enabled": {env:OC_ENABLE_PUPPET_MCP}
+      "enabled": true
     },
     "sequential-thinking": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "enabled": {env:OC_ENABLE_THINKING_MCP}
-    },
+      "enabled": true
+    }
   }
 }
