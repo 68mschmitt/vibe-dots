@@ -2,52 +2,68 @@
 
 ## Structure
 
-Every tool is an `@opencode-ai/plugin` that exports a default `Plugin`. The plugin receives `$` (shell executor) and returns a `{ tool: { ... } }` map.
+Custom tools in `~/.config/opencode/tools/` (or `.opencode/tools/`) use **direct exports** of `tool()` definitions. This is NOT the same as the Plugin pattern used in `plugins/`.
+
+### Single tool per file (default export)
 
 ```ts
-import { tool, type Plugin } from "@opencode-ai/plugin"
+import { tool } from "@opencode-ai/plugin"
 
-const plugin: Plugin = async ({ $ }) => {
-  const toolError = (errorObj: Record<string, any>): string =>
-    JSON.stringify(
-      {
-        ...errorObj,
-        _failureInstruction:
-          "TOOL FAILURE: This tool call did not succeed. When responding to the user, you MUST mention that this tool call failed and include the relevant error details. Continue performing any other tasks you were asked to do.",
-      },
-      null,
-      2
-    )
-
-  return {
-    tool: {
-      my_tool_name: tool({
-        description: "What the tool does — one sentence, specific.",
-        args: {
-          name: tool.schema.string().describe("What this arg is and where to get it"),
-          count: tool.schema.number().default(10).describe("Meaningful default with explanation"),
-          tags: tool.schema.array(tool.schema.string()).optional().describe("Optional list of X"),
-        },
-        async execute(args) {
-          // implementation
-        },
-      }),
-    },
-  }
-}
-
-export default plugin
+export default tool({
+  description: "What the tool does — one sentence, specific.",
+  args: {
+    name: tool.schema.string().describe("What this arg is and where to get it"),
+  },
+  async execute(args) {
+    // implementation — tool name is the filename
+  },
+})
 ```
+
+### Multiple tools per file (named exports)
+
+Each named export becomes a tool named `<filename>_<exportname>`:
+
+```ts
+import { tool } from "@opencode-ai/plugin"
+
+const toolError = (errorObj: Record<string, any>): string =>
+  JSON.stringify(
+    {
+      ...errorObj,
+      _failureInstruction:
+        "TOOL FAILURE: This tool call did not succeed. When responding to the user, you MUST mention that this tool call failed and include the relevant error details. Continue performing any other tasks you were asked to do.",
+    },
+    null,
+    2
+  )
+
+export const my_tool_name = tool({
+  description: "What the tool does — one sentence, specific.",
+  args: {
+    name: tool.schema.string().describe("What this arg is and where to get it"),
+    count: tool.schema.number().default(10).describe("Meaningful default with explanation"),
+    tags: tool.schema.array(tool.schema.string()).optional().describe("Optional list of X"),
+  },
+  async execute(args) {
+    const $ = Bun.$
+    // implementation using Bun.$ for shell commands
+  },
+})
+```
+
+> **Important:** Do NOT use the Plugin pattern (`export default plugin` with `Plugin` type) in the `tools/` directory. That pattern is only for files in `plugins/`. Tools must export `tool()` definitions directly.
 
 ## Error Handling
 
-**Every tool MUST define `toolError()` immediately after the plugin function opens.** This ensures the calling AI agent reports failures to the user instead of silently swallowing them.
+**Define `toolError()` at module scope** for tools that run shell commands. This ensures the calling AI agent reports failures to the user instead of silently swallowing them.
 
 ### Full Failure — tool cannot complete its purpose
 
 Return early with `toolError()`. Include `error` (what failed), `details` (stderr/output), and optionally `hint` (how to fix).
 
 ```ts
+const $ = Bun.$
 const result = await $`some command ${flags}`.nothrow().quiet()
 
 if (result.exitCode !== 0) {
@@ -101,9 +117,10 @@ return JSON.stringify({
 
 ## Shell Commands
 
+- Use `Bun.$` for shell commands (assign `const $ = Bun.$` at the top of `execute` for convenience).
 - Always `.nothrow().quiet()` — never let commands throw or print to stdout.
 - Always check `exitCode !== 0` before using the result.
-- Use template literals: `` $`command ${variable}` `` — the plugin shell handles escaping.
+- Use template literals: `` $`command ${variable}` `` — the shell handles escaping.
 - For flags arrays: `` $`command ${flags}` `` spreads correctly.
 
 ## Arg Descriptions
@@ -124,5 +141,5 @@ Include: what format, where to get it, what NOT to pass if ambiguous.
 ## File Naming
 
 One file per logical group of related tools. Name matches the tool prefix:
-- `gh_pr_comment.ts` → `gh_pr_reply_comment`, `gh_pr_resolve_thread`, `gh_pr_get_threads`
-- `git_commit_flow.ts` → `git_commit_flow`, `git_reset_undo`
+- `gh_pr_comment.ts` → `gh_pr_comment_gh_pr_reply_comment`, `gh_pr_comment_gh_pr_resolve_thread`, `gh_pr_comment_gh_pr_get_threads`
+- `git_status.ts` → `git_status_git_status` (or use `export default` for a single tool named `git_status`)

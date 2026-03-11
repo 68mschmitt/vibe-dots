@@ -1,15 +1,3 @@
 {
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": [
-    "./tools/gh_pr_context.ts",
-    "./tools/gh_pr_create.ts",
-    "./tools/gh_pr_comment.ts",
-    "./tools/gh_pr_ops.ts",
-    "./tools/git_status.ts",
-    "./tools/git_branch_diff.ts",
-    "./tools/git_commit_flow.ts",
-    "./tools/az_sprint.ts",
-    "./tools/az_work_item.ts",
-    "./tools/gh_pr_list.ts"
-  ]
+  "$schema": "https://opencode.ai/config.json"
 }
